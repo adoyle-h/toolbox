@@ -6,22 +6,25 @@ WORKDIR /root
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
 
 RUN apk update
-RUN apk add \
-    # build/code
-    build-base git go bash bash-completion ncurses nvim tmux jq \
-    # network
-    bind-tools iputils tcpdump curl nmap tcpflow iftop net-tools mtr netcat-openbsd bridge-utils iperf ngrep \
-    # certificates
-    ca-certificates openssl \
-    # processes/io
-    htop atop strace iotop sysstat ltrace ncdu logrotate hdparm pciutils psmisc tree pv \
-    # kubernetes
-    kubectl
+
+# build/code
+RUN apk add --no-cache \
+    build-base git go bash bash-completion ncurses neovim tmux jq
+
+# network
+RUN apk add --no-cache \
+    bind-tools iputils tcpdump curl nmap tcpflow iftop net-tools mtr netcat-openbsd \
+    bridge-utils iperf3 ngrep conntrack-tools
+
+# certificates
+RUN apk add --no-cache ca-certificates openssl
+
+# processes/io
+RUN apk add --no-cache \
+    htop atop strace iotop sysstat ltrace ncdu logrotate hdparm pciutils psmisc tree pv
+
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 ENTRYPOINT bash
-
-# ----------------------------------------------------------------
-
-# FROM alpine:3.15.0
-
-# COPY --from=builder /etc/apk/repositories /etc/apk/repositories
+LABEL maintainer="ADoyle <adoyle.h@gmail.com>"
+ENV TZ=Asia/Shanghai

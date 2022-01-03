@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+set -o errtrace
+(shopt -p inherit_errexit &>/dev/null) && shopt -s inherit_errexit
+
+main() {
+  VERSION=${1:-dev}
+  shift 1
+
+  docker run --net=host --rm -it adoyle/toolbox:"${VERSION}" "$@"
+}
+
+main "$@"
